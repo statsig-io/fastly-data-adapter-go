@@ -45,16 +45,15 @@ func (f *FastlyDataAdapter) getData() (string, error) {
 	return string(body), err
 }
 
-func (f *FastlyDataAdapter) Initialize() error {
+func (f *FastlyDataAdapter) Initialize() {
 	data, err := f.getData()
 	if err != nil {
-		return err
+		return
 	}
 
 	if data != "" {
 		f.supportConfigSpecPolling = true
 	}
-	return nil
 }
 
 func (f *FastlyDataAdapter) Get(key string) string {
@@ -70,17 +69,15 @@ func (f *FastlyDataAdapter) Get(key string) string {
 	return data
 }
 
-func (f *FastlyDataAdapter) Set(key string, value string) error {
+func (f *FastlyDataAdapter) Set(key string, value string) {
 	// no-op. Statsig's Edge Config integration keeps config specs synced through Statsig's service
-	return nil
 }
 
-func (f *FastlyDataAdapter) Shutdown() error {
+func (f *FastlyDataAdapter) Shutdown() {
 	// no-op
-	return nil
 }
 
-func (f *FastlyDataAdapter) SupportsPollingUpdatesFor(key string) bool {
+func (f *FastlyDataAdapter) ShouldBeUsedForQueryingUpdates(key string) bool {
 	if f.isConfigSpecKey(key) {
 		return f.supportConfigSpecPolling
 	}
