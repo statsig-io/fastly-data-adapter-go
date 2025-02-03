@@ -23,10 +23,10 @@ import (
   "github.com/statsig-io/fastly-data-adapter-go" 
 )
 
-	adapter := NewFastlyDataAdapter(fastlyKey, storeID, configSpecKey)
-        statsigOptions := &Options{
-          DataAdapter: &adapter
-	}
-  statsig.InitializeWithOptions("server-secret-key", statsigOptions)
+adapter := NewFastlyDataAdapter(fastlyKey, storeID, configSpecKey)
+statsigOptions := &Options{
+  DataAdapter: &adapter
+}
+statsig.InitializeWithOptions("server-secret-key", statsigOptions)
 ```
 
