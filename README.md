@@ -25,7 +25,7 @@ import (
 
 	adapter := NewFastlyDataAdapter(fastlyKey, storeID, configSpecKey)
   statsigOptions := &Options{
-    DataStore: &adapter
+    DataAdapter: &adapter
   }
   statsig.InitializeWithOptions("server-secret-key", statsigOptions)
 ```
