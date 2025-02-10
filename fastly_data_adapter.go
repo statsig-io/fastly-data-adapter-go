@@ -1,48 +1,43 @@
 package statsig_fastly_adapter
 
 import (
-	"fmt"
-	"io"
 	"net/http"
 	"regexp"
+
+	"github.com/fastly/compute-sdk-go/kvstore"
 )
 
 type FastlyDataAdapter struct {
 	fastlyKey                string
-	storeID                  string
+	storeName                string
 	configSpecsKey           string
 	supportConfigSpecPolling bool
 	httpClient               *http.Client
 }
 
-func NewFastlyDataAdapter(fastlyKey, storeID, configSpecsKey string) *FastlyDataAdapter {
+func NewFastlyDataAdapter(fastlyKey, storeName, configSpecsKey string) *FastlyDataAdapter {
 	client := &http.Client{}
 
 	return &FastlyDataAdapter{
 		fastlyKey:      fastlyKey,
-		storeID:        storeID,
+		storeName:      storeName,
 		configSpecsKey: configSpecsKey,
 		httpClient:     client,
 	}
 }
 
 func (f *FastlyDataAdapter) getData() (string, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.fastly.com/resources/stores/config/%s/item/%s", f.storeID, f.configSpecsKey), nil)
+	kv, err := kvstore.Open(f.storeName)
 	if err != nil {
 		return "", err
 	}
 
-	req.Header.Set("Fastly-Key", f.fastlyKey)
-
-	resp, err := f.httpClient.Do(req)
+	value, err := kv.Lookup(f.configSpecsKey)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-
-	return string(body), err
+	return value.String(), err
 }
 
 func (f *FastlyDataAdapter) Initialize() {
